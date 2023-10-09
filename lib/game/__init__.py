@@ -1,11 +1,5 @@
 from lib.strings import *
-
-SYMBOLS = {
-    'A': 2,
-    'B': 3,
-    'C': 5,
-    'D': 7
-}
+from main import SYMBOLS
 
 
 def askBetLine():
@@ -40,11 +34,11 @@ def askUserInfo(question):
     '''
 
     try:
-        answer = str(input(question)).split()
+        answer = str(input(question)).strip()
     except (KeyboardInterrupt):
         exitProgram()
     else:
-        if answer in 'Qq':
+        if answer in 'Qq' and answer != '':
             exitProgram()
         else:
             return answer
@@ -88,11 +82,11 @@ def askBetMoney(maximum):
     '''
     while True:
         bet_money = askMoney('What would you like to bet for each line? ')
-        if 0 < bet_money <= maximum:
+        if 1 <= bet_money <= maximum:
             return bet_money
         else:
             errorMessage(
-                f'The bet must be in range (0 - {formatMoney(maximum)})')
+                f'The bet must be in range [$1 - {formatMoney(maximum)}]')
 
 
 def generateLines():

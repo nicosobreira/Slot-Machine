@@ -4,7 +4,7 @@ def errorMessage(message):
     Args:
         message (str): what message to show
     '''
-    message = 'ERROR!', message
+    message = f'ERROR! {message}'
     showText(colorsText(message, 'Red'))
 
 

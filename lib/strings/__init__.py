@@ -42,11 +42,11 @@ def colorsText(text, color='Normal'):
     '''Print text with color
 
     Args:
-        text (str): the txt that will be print
+        text (str): the text that will be print
         color (str, optional): What color to you want? Defaults to 'Normal'.
 
-        Types of colors:
-            Normal, Green, Yellow, Red, Blue, Purple, Cyan or Gray
+    Types of colors:
+        Normal; Green; Yellow; Red; Blue; Purple; Cyan; Gray
 
     Returns:
         str: colorized version of the text
@@ -75,9 +75,8 @@ def formatMoney(money):
     Returns:
         str: a better looking number
     '''
-    
+
     str_money = f'{money:.2f}'
-    str_money = str_money.replace('.', ',')
     return '$' + str_money
 
 
@@ -93,21 +92,6 @@ def clearTerminal():
         system('cls')
     else:
         pass
-
-
-def showTuple(tuple):
-    '''_summary_
-
-    Args:
-        tuple (tuple): show the values in a tuple
-    '''
-    
-    for elemento in tuple:
-        print(f'{colorsText(elemento, "Blue")}', end='')
-        if elemento == tuple[-1]:
-            print()
-        else:
-            print(', ', end='')
 
 
 def exitProgram():

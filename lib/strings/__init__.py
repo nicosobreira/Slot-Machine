@@ -26,7 +26,8 @@ def showText(text, type='-', length=30):
         type (str, optional): the type of the lines. Defaults to '-'.
         length (int, optional): the length of the lines and center. Defaults to 30.
     '''
-    if len(text) >= length:
+
+    if len(text) - 9 >= length:
         custom_length = len(text) + 2
         line(type, custom_length)
         print(text.center(custom_length))
@@ -62,12 +63,11 @@ def colorsText(text, color='Normal'):
         'Cyan': '\033[36m',
         'Gray': '\033[37m'
     }
-    color = color.strip().capitalize()
     return f"{COLORS[color]}{text}{COLORS['Normal']}"
 
 
 def formatMoney(money):
-    '''Format money
+    '''Formats the money
 
     Args:
         money (float): the value to be format
@@ -76,8 +76,10 @@ def formatMoney(money):
         str: a better looking number
     '''
 
+    from config import TYPE_MONEY
+
     str_money = f'{money:.2f}'
-    return '$' + str_money
+    return TYPE_MONEY + str_money
 
 
 def clearTerminal():

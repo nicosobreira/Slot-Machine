@@ -1,11 +1,5 @@
 from lib.strings import *
-
-SYMBOLS = {
-    'A': 2,
-    'B': 3,
-    'C': 5,
-    'D': 7
-}
+import config as cfg
 
 
 def askBalance():
@@ -28,32 +22,20 @@ def askBetLine():
     '''Ask how many lines will bet
 
     Returns:
-<<<<<<< Updated upstream
-        int: a number between 1 and 3, the bet
+        int: a number between 1 and config.line, the bet
     '''
 
     while True:
-        bet = askUserInfo('What would you like to bet on (1-3)? ')
-=======
-        int: a number between 1 and 3
-    '''
-
-    while True:
-        bet = askUserInfo(f'The number of lines to bet (1-3)? ')
->>>>>>> Stashed changes
+        bet = askUserInfo(
+            f'How many lines do you think will bet? (1-{cfg.LINES})? ')
         try:
             int(bet)
         except:
             errorMessage('This valeu must be a integer')
         else:
             int_bet = int(bet)
-<<<<<<< Updated upstream
-            if int_bet not in range(1, 4):  # 1 -> 4 - 1 = 3
-                errorMessage('This valeu must be in range 1-3')
-=======
-            if int_bet not in range(1, 4):
-                errorMessage('This valeu must be in range (1-3)')
->>>>>>> Stashed changes
+            if int_bet not in range(1, cfg.LINES + 1):
+                errorMessage(f'This value must be in range 1-{cfg.LINES}')
             else:
                 return int_bet
 
@@ -89,12 +71,10 @@ def askMoney(question):
         float: the correspond value of money
     '''
 
-    SYMBOLS_MONEY = ('R', '$')
-
     while True:
         money = askUserInfo(question)
         for character in money:
-            if character in SYMBOLS_MONEY:
+            if character in cfg.TYPE_MONEY:
                 money = money.replace(character, '')
 
         try:
@@ -103,13 +83,14 @@ def askMoney(question):
         except ValueError:
             errorMessage('This valeu must be a float or integer')
         else:
-            if 1 <= money_float <= 1000:
+            if 1 <= money_float <= cfg.MAXIMUM_MONEY:
                 return money_float
             else:
-                errorMessage('This value must be in range (1 - 1000)')
+                errorMessage(
+                    f'The amount of money must be in {cfg.TYPE_MONEY}1 - {formatMoney(cfg.MAXIMUM_MONEY)})')
 
 
-def askBetMoney(maximum):
+def askBetMoney(balance):
     '''Ask bet Money
 
     Args:
@@ -120,11 +101,11 @@ def askBetMoney(maximum):
     '''
     while True:
         bet_money = askMoney('What would you like to bet for each line? ')
-        if 1 <= bet_money <= maximum:
+        if 1 <= bet_money <= balance:
             return bet_money
         else:
             errorMessage(
-                f'The bet must be in range [$1 - {formatMoney(maximum)}]')
+                f'The bet must be in range $1 - {formatMoney(balance)}')
 
 
 def generateLines():
@@ -135,14 +116,11 @@ def generateLines():
     '''
 
     from random import choice
-    SYMBOLS_LIST = [key for key in SYMBOLS.keys()]
+    SYMBOLS_LIST = [key for key in cfg.SYMBOLS.keys()]
     all_lines = []
 
-<<<<<<< Updated upstream
-    for index in range(9):  # 0 -> 8
-=======
-    for index in range(10):  # 0 -> 12
->>>>>>> Stashed changes
+    for index in range(cfg.TOTAL_SYMBOLS):
+        #random_symbol = choice(SYMBOLS_LIST)
         random_symbol = choice(SYMBOLS_LIST)
         all_lines.append(random_symbol)
     return all_lines
@@ -156,11 +134,11 @@ def showLines(lines_list):
     '''
 
     count = 0
-    for column in range(3):
-        for line in range(3):
+    for line in range(cfg.LINES):
+        for column in range(cfg.COLUMN):
             symbol = lines_list[count]
             print(symbol, end='')
-            if line == 2:
+            if column == cfg.COLUMN - 1:
                 print()
             else:
                 print(' | ', end='')
@@ -176,15 +154,14 @@ def verifyBet(all_lines):
     Returns:
         list: the result of the game (gain or lost money)
     '''
-
-    bet_result = [[], [], [], 0]
+    
+    bet_result = [0]
     cont = 0
-    for current_index in range(0, 9, 3):
-        current_line = all_lines[current_index:current_index + 3]
-
+    for current_index in range(0, cfg.TOTAL_SYMBOLS, cfg.COLUMN):
+        current_line = all_lines[current_index:current_index + cfg.COLUMN]
         if all(symbol == current_line[0] for symbol in current_line):
-            bet_result[-1] += 1
-            bet_result[cont].append(current_line[0])
+            bet_result[0] += 1
+            bet_result.append(current_line[0])
         cont += 1
 
     return bet_result

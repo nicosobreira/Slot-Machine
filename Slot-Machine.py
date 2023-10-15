@@ -27,7 +27,7 @@ def main():
             f'You are betting {formatMoney(bet_price_line)} in {bet_lines} lines. Total = {formatMoney(bet_price_total)}')
         showLines(all_lines)
         bet_result = verifyBet(all_lines)
-        if bet_result[-1] == 0:
+        if bet_result[0] == 0 or bet_result[0] != bet_lines:
             balance -= bet_price_total
 
             if balance <= 0:
@@ -40,15 +40,12 @@ def main():
 
         else:
             bonus = 0
-            for each_list_line in bet_result[:3]:
-                if len(each_list_line) == 0:
-                    pass
-                else:
-                    bonus += SYMBOLS[each_list_line[0]]
+            for each_symbol_line in bet_result[1:]:
+                bonus += cfg.SYMBOLS[each_symbol_line]
 
+            balance += (bet_price_total + bonus)
             showText(
                 f'You Win {colorsText(formatMoney(bet_price_total), "Green")} + {colorsText(formatMoney(bonus), "Yellow")} :)', '=')
-            balance += (bet_price_total + bonus)
 
 
 if __name__ == '__main__':

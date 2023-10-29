@@ -1,52 +1,59 @@
 from lib.strings import *
-from lib.game import *
+from lib.game import askMoney, showBalance, askUserInfo
+from modes.line_game import perLineGame
+from modes.symbol_game import perSymbolGame
+import data.data as dt
+import data.config as cfg
 
 
-def main():
-    balance = first_balance = askBalance()
-
-    clearTerminal()
+def needsMoreMoney():
     while True:
-        if balance == first_balance:
-            balance_color = 'Yellow'
-        elif balance > first_balance:
-            balance_color = 'Green'
-        else:
-            balance_color = 'Red'
-
-        showText(
-            f'Current balance is {colorsText(formatMoney(balance), balance_color)}', '~')
-        askUserInfo('Press Enter to continue. ')
-
-        bet_lines = askBetLine()
-        bet_price_line = askBetMoney(balance)
-        bet_price_total = bet_lines * bet_price_line
-
-        all_lines = generateLines()
+        line('~', 30)
         print(
-            f'You are betting {formatMoney(bet_price_line)} in {bet_lines} lines. Total = {formatMoney(bet_price_total)}')
-        showLines(all_lines)
-        bet_result = verifyBet(all_lines)
-        if bet_result[0] == 0 or bet_result[0] != bet_lines:
-            balance -= bet_price_total
-
-            if balance <= 0:
-                print(
-                    f'You have {colorsText("NO MONEY", "Red")}. You need to add more!')
-                balance = first_balance = askBalance()
-            else:
-                showText(
-                    f'You Lost {colorsText(formatMoney(bet_price_total), "Red")} :(', '=')
-
+            f'You {colorsText("ran out", "Red", style="Bold")} of {colorsText("money", "Green", style="Bold")}')
+        print(
+            f'You need add more {colorsText(formatMoney(-dt.money_lost), "Yellow")}')
+        line('~', 30)
+        dt.first_balance = dt.balance = askMoney(
+            f'Add more {colorsText("money", "Green", style="Bold")} or [{colorsText("CTRL + C", "Blue")}] to {colorsText("quit", "Red")}: ')
+        dt.money_lost += dt.balance
+        if dt.money_lost <= 0:
+            line('>', 35)
+            print(
+                f'You {colorsText("need", "Red", style="Bold")} to add more money!')
+            line('<', 35)
         else:
-            bonus = 0
-            for each_symbol_line in bet_result[1:]:
-                bonus += cfg.SYMBOLS[each_symbol_line]
-
-            balance += (bet_price_total + bonus)
-            showText(
-                f'You Win {colorsText(formatMoney(bet_price_total), "Green")} + {colorsText(formatMoney(bonus), "Yellow")} :)', '=')
+            clearTerminal()
+            break
 
 
 if __name__ == '__main__':
-    main()
+    showText(f'Welcome to {rainbowText("Slot-Machine")}!', length=39)
+    print(f'Play with {colorsText("responsibility", style="Risk")} fun!')
+    dt.first_balance = dt.balance = askMoney(
+        'How much you will add to your balance? ')
+    clearTerminal()
+    while True:
+        if dt.balance == 0:
+            needsMoreMoney()
+        for option, message in cfg.OPTIONS.items():
+            print(colorsText(option, 'Blue'), '<->', randomColorText(message))
+
+        showBalance()
+
+        user_option = askUserInfo(
+            f'Choose a option [Letters in {colorsText("blue", "Blue")}]: ').upper()
+
+        if user_option not in cfg.OPTIONS_LIST:
+            errorMessage('Chose a valid letter')
+        else:
+            clearTerminal()
+            if user_option == 'L':
+                perLineGame()
+            elif user_option == 'S':
+                perSymbolGame()
+            elif user_option == 'B':
+                dt.balance += askMoney('How much do you want to add? ')
+                dt.first_balance = dt.balance
+            elif user_option == 'Q':
+                exitProgram()
